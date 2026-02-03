@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  username String   @unique
+  password String
+  role     String   // ADMIN, CLIENT
+  createdAt DateTime @default(now())
+}
+
+model DailyRecord {
+  id              Int      @id @default(autoincrement())
+  date            DateTime @unique
+  totalSale       Float
+  totalSaleGmv    Float
+  gmvSaleLive     Float
+  gmvAdsSpend     Float    // GMV Ads Spend (Input)
+  gmvLiveAdsSpend Float    // GMV Live Ads Spend (Input)
+  ttamSpendAds    Float    // TTAM Spend (Input)
+  ttamImpressions Int      // TTAM Impressions (Input)
+  visitor         Int      @default(0) // Funnel Input
+  customers       Int      @default(0) // Funnel Input
+}
+
+model AnalysisReport {
+  id                  Int      @id @default(autoincrement())
+  clientName          String
+  startDate           DateTime
+  endDate             DateTime
+  saleAnalysis        String
+  saleRecommendation  String
+  prodAnalysis        String
+  prodRecommendation  String
+  liveAnalysis        String
+  liveRecommendation  String
+  summaryContent      String
+  version             Int      @default(1)
+  createdAt           DateTime @default(now())
+}

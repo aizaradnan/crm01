@@ -116,18 +116,26 @@ app.post('/api/auth/login', async (req: Request, res: Response) => {
 
 // Get Records (Client & Admin)
 app.get('/api/records', authenticateToken, async (req: any, res: Response) => {
-    const { month } = req.query; // Format: YYYY-MM
+    const { month, startDate, endDate } = req.query; // Format: YYYY-MM OR startDate/endDate
 
-    let where = {};
-    if (typeof month === 'string') {
-        const startDate = new Date(`${month}-01`);
-        const endDate = new Date(startDate);
-        endDate.setMonth(endDate.getMonth() + 1);
+    let where: any = {};
+
+    if (startDate && endDate) {
+        where = {
+            date: {
+                gte: new Date(startDate as string),
+                lt: new Date(endDate as string) // Client already sends inclusive end date (day + 1)
+            }
+        };
+    } else if (typeof month === 'string') {
+        const start = new Date(`${month}-01`);
+        const end = new Date(start);
+        end.setMonth(end.getMonth() + 1);
 
         where = {
             date: {
-                gte: startDate,
-                lt: endDate
+                gte: start,
+                lt: end
             }
         }
     }

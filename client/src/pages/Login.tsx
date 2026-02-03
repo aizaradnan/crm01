@@ -15,8 +15,19 @@ const Login = () => {
             localStorage.setItem('token', res.data.token);
             localStorage.setItem('user', JSON.stringify(res.data.user));
             navigate('/');
-        } catch (err) {
-            setError('Invalid credentials');
+        } catch (err: any) {
+            console.error(err);
+            if (err.response) {
+                if (err.response.status === 401) {
+                    setError('Invalid credentials');
+                } else if (err.response.status === 404) {
+                    setError('Server not found (404). Ensure backend is running/reachable.');
+                } else {
+                    setError(`Error: ${err.response.status} ${err.response.statusText}`);
+                }
+            } else {
+                setError('Network Error. Is the backend server running?');
+            }
         }
     };
 
